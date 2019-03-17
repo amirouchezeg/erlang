@@ -23,7 +23,10 @@ attend(N) ->
         true ->
           io:format("Le RER est plain ~n",[]),
           sleep(3000),
-          io:format("Un RER est arriver a l amphi ~n",[])
+          io:format("Un RER est arriver a l amphi ---------------------- ~n",[]),
+          sleep(5000),
+          io:format("Le RER à revenir à la gare de Lieusaint ~n",[]),
+          attend(0)
       end
   end.
 

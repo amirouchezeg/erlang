@@ -19,17 +19,17 @@ attend(N,Id,RER) ->
     {Student,{monter}}-> ok,
     P=N+1,
     if
-       P < 4 ->
-         sleep(rand:uniform(3000)),
+       P < 20 ->
          attend(P,Id,RER);
        true ->
+         sleep(rand:uniform(6000)),
          io:format("Le Car de ~p est plain ~n",[Id]),
          demarer(RER , Id)
     end
   end.
 
 demarer(RER,Id)->
-  sleep(2000),
+  sleep(3000),
   io:format("Un Car de ~p est arriver a Lieusaint  ~n",[Id]),
   RER!{self(),{car_arrive}},
   sleep(1000),
