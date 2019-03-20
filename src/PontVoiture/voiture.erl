@@ -10,21 +10,25 @@
 -author("amirouche").
 
 %% API
--export([traverser/4]).
-traverser(From,To,NameDirection,Id) ->
-  From!{self(),{a_traversir},To},
-  attend(From,To,NameDirection,Id)
+-export([traverser/3]).
+traverser(Pont,NameDirection,Id) ->
+  if
+    NameDirection=="Nord" ->
+      Pont!{self(),{traversir_de_nord}};
+    true ->
+      Pont!{self(),{traversir_de_sud}}
+  end,
+  attend(Pont,NameDirection,Id)
 .
 
-attend(From,To,NameDirection,Id)->
+attend(Pont,NameDirection,Id)->
   receive
-      {Direction,{traversir}}-> ok,
-      sleep(rand:uniform(5000)),
-      io:format("la voiture ~p a traversé de ~p ~n",[Id,NameDirection]),
-      sleep(rand:uniform(5000)),
-      traverser(From,To,NameDirection,Id)
+      {Pont,{traversir}}-> ok,
+      sleep(400),
+      io:format("la voiture ~p à sorti de ~p ~n",[Id,NameDirection]),
+      sleep(400),
+      traverser(Pont,NameDirection,Id)
   end.
-
 
 sleep(T) ->
   receive

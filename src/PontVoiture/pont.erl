@@ -7,40 +7,56 @@
 %%% Created : 15. Mar 2019 11:47 ص
 %%%-------------------------------------------------------------------
 -module(pont).
+-author("saad").
 -author("amirouche").
 
 %% API
--export([agent/4]).
+-export([agent/3]).
 
-agent(N,S,Nord,Sud)->
-  receive
-      {Voiture,{passer} , Dir}-> ok,
-        if
-          Dir ==1 ->
-              S=0,
-              Nn=N+1,
-              if
-                Nn < 4 ->
-                  Nord!{self(),Voiture,Nn};
-                true ->
-                  N=0
-              end,
-              agent(Nn,S);
-          true ->
-              N=0,
-              Ss=S+1,
-              if
-                Ss < 4 ->
-                  Sud!{self(),{Voiture}}
-              end,
-              agent(N,Ss)
-        end
-end.
-
-passerN(Voiture)->
-  Voiture!{self(),{passer}}
+agent(CountN,CountS,Dir)->
+  if
+    Dir == 0 ->
+      if
+        CountN < 4 ->
+          receive
+            {Voiture,{traversir_de_nord}}-> ok,
+            CountNn=CountN+1,
+            traverse(CountNn,0,0,Voiture)
+          after 1000 ->
+            if
+              CountS == 4 ->
+                CountSs=CountS - 1,
+                agent(CountN,CountSs,1);
+              true ->
+                agent(CountN,CountS,1)
+            end
+          end;
+        true ->
+          agent(CountN,CountS,1)
+      end;
+    true ->
+      if
+        CountS < 4 ->
+          receive
+            {Voiture,{traversir_de_sud}}-> ok,
+              CountSs=CountS+1,
+              traverse(0,CountSs,1,Voiture)
+          after 1000 ->
+            if
+              CountN == 4 ->
+                CountNn=CountN - 1,
+                agent(CountNn,CountS,0);
+            true ->
+              agent(CountN,CountS,0)
+            end
+          end;
+        true ->
+          agent(CountN,CountS,0)
+      end
+  end
 .
 
-passerS(Voiture)->
-  Voiture!{self(),{passer}}
+traverse(CountN,CountS,Dir,Voiture) ->
+  Voiture!{self(),{traversir}},
+  agent(CountN,CountS,Dir)
 .
